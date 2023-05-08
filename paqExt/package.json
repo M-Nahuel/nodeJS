@@ -1,0 +1,15 @@
+{
+  "name": "paqext",
+  "version": "1.0.0",
+  "description": "My Node.js package",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "Nahuel",
+  "license": "ISC",
+  "devDependencies": {
+    "express": "^4.18.2"
+  }
+}
