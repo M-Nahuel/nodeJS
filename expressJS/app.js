@@ -2,6 +2,15 @@ const express = require('express');
 const app = express();
 const {infoCourses} = require('./courses.js');
 
+//TODO: add a function to add queries in each path
+
+//Routers
+const routerProgramming = express.Router();
+app.use('/api/courses/programming', routerProgramming);
+const routerMath = express.Router();
+app.use('api/courses/math', routerMath);
+
+
 app.get('/', (req, res) => {
     res.send('Hi! Whats up?');
 });
@@ -10,11 +19,11 @@ app.get('/api/courses', (req, res) => {
   res.send(JSON.stringify(infoCourses));
 });
 
-app.get('/api/courses/programming', (req, res) => {
+routerProgramming.get('/', (req, res) => {
   res.send(JSON.stringify(infoCourses.programming));
 });
 
-app.get('/api/courses/programming/:language', (req, res) => {
+routerProgramming.get('/:language', (req, res) => {
   const language = req.params.language;
   const results = infoCourses.programming.filter(course => course.language === language);
 
@@ -22,10 +31,14 @@ app.get('/api/courses/programming/:language', (req, res) => {
     return res.status(404).send(`${language} courses not found.`);
   }
 
+  if (req.query.sort === 'views') {
+    return res.send(JSON.stringify(results.sort((a, b) => a.views - b.views)));
+  }
+
   res.send(JSON.stringify(results));
 });
 
-app.get('/api/courses/programming/:language/:level', (req, res) => {
+routerProgramming.get('/:language/:level', (req, res) => {
   const language = req.params.language;
   const level = req.params.level;
   const results = infoCourses.programming.filter(course => course.language === language && course.level === level);
@@ -37,11 +50,11 @@ app.get('/api/courses/programming/:language/:level', (req, res) => {
   res.send(JSON.stringify(results));
 });
 
-app.get('/api/courses/math', (req, res) => {
+routerMath.get('/', (req, res) => {
   res.send(JSON.stringify(infoCourses.math));
 });
 
-app.get('/api/courses/math/:subject', (req, res) => {
+routerMath.get('/:subject', (req, res) => {
   const subject = req.params.subject;
   const results = infoCourses.math.filter(course => course.subject === subject);
 
@@ -52,7 +65,7 @@ app.get('/api/courses/math/:subject', (req, res) => {
   res.send(JSON.stringify(results));
 });
 
-app.get('/api/courses/math/:subject/:level', (req, res) => {
+routerMath.get('/:subject/:level', (req, res) => {
   const subject = req.params.subject;
   const level = req.params.level;
   const results = infoCourses.math.filter(course => course.subject === subject && course.level === level);
