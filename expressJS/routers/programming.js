@@ -4,8 +4,10 @@ const {programming} = require('../data/courses.js').infoCourses;
 
 const routerProgramming = express.Router();
 
+routerProgramming.use(express.json());
+
 routerProgramming.get('/', (req, res) => {
-  res.send(JSON.stringify(programming));
+  res.json(programming);
 });
   
 routerProgramming.get('/:language', (req, res) => {
@@ -17,10 +19,10 @@ routerProgramming.get('/:language', (req, res) => {
   }
   
   if (req.query.sort === 'views') {
-    return res.send(JSON.stringify(results.sort((a, b) => a.views - b.views)));
+    return res.send(results.sort((a, b) => a.views - b.views));
   }
   
-  res.send(JSON.stringify(results));
+  res.json(results);
 });
   
 routerProgramming.get('/:language/:level', (req, res) => {
@@ -32,7 +34,49 @@ routerProgramming.get('/:language/:level', (req, res) => {
     return res.status(404).send(`There are no ${language} courses of level ${level}.`);
   }
     
-  res.send(JSON.stringify(results));
+  res.json(results);
+});
+
+routerProgramming.post('/', (req, res) => {
+    //TODO: add validation method
+    let newCourse = req.body;
+    programming.push(newCourse);
+    res.json(programming);
+});
+
+routerProgramming.put('/:id', (req, res) => {
+    const modifiedCourse = req.body;
+    const id = req.params.id;
+
+    const index = programming.findIndex(course => course.id == id);
+
+    if (index >= 0) {
+        programming[index] = modifiedCourse;
+    }
+    res.json(programming);
+});
+
+routerProgramming.patch('/:id', (req, res) => {
+    const modified = req.body;
+    const id = req.params.id;
+
+    const index = programming.findIndex(course => course.id == id);
+
+    if (index >= 0) {
+        const courseMod = programming[index];
+        Object.assign(courseMod, modified);
+    }
+    res.json(programming);
+});
+
+routerProgramming.delete('/:id', (req, res) => {
+    const id = req.params.id;
+    const index = programming.findIndex(course => course.id == id);
+
+    if(index >= 0) {
+        programming.splice(index, 1);
+    }
+    res.json(programming);
 });
 
 module.exports = routerProgramming;
